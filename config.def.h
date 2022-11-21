@@ -1,5 +1,6 @@
 /* See LICENSE file for copyright and license details. */
 
+#include <X11/XF86keysym.h>
 /* appearance */
 static const unsigned int borderpx  = 0;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
@@ -70,6 +71,12 @@ static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() 
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbgcolor, "-sf", selfgcolor, NULL };
 static const char *termcmd[]  = { "st", NULL };
 
+/* media commands */
+static const char *medplaypausecmd[] = { "playerctl", "play-pause", NULL };
+static const char *medstopcmd[] = { "playerctl", "stop", NULL };
+static const char *mednextcmd[] = { "playerctl", "next", NULL };
+static const char *medprevcmd[] = { "playerctl", "previous", NULL };
+
 static const Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
@@ -83,7 +90,7 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
 	{ MODKEY,                       XK_Return, zoom,           {0} },
 	{ MODKEY,                       XK_Tab,    view,           {0} },
-	{ MODKEY|ShiftMask,             XK_c,      killclient,     {0} },
+	{ MODKEY|ShiftMask,             XK_e,      killclient,     {0} },
 	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
 	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
@@ -105,6 +112,26 @@ static const Key keys[] = {
 	TAGKEYS(                        XK_8,                      7)
 	TAGKEYS(                        XK_9,                      8)
 	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
+
+	/* additional shortcuts */
+	{ MODKEY | ShiftMask,           XK_p,      spawn,          SHCMD("/usr/bin/flameshot gui &")},
+	{ MODKEY|ShiftMask,             XK_l,      spawn,          SHCMD("/usr/local/bin/slock") },
+	{ MODKEY|Mod4Mask,              XK_a,      spawn,          SHCMD("playerctl previous NULL") },
+	{ MODKEY|Mod4Mask,              XK_s,      spawn,          SHCMD("playerctl next NULL") },
+	{ MODKEY|Mod4Mask,              XK_d,      spawn,          SHCMD("playerctl play-pause NULL") },
+        { MODKEY|ControlMask,           XK_k,      spawn,          SHCMD("/usr/bin/setxkbmap -query | grep 'layout:[[:blank:]]*us' && setxkbmap sk || setxkbmap us && kill -46 $(pidof dwmblocks) && setxkbmap -option caps:ctrl_modifier")},
+
+
+        { 0,                            XF86XK_MonBrightnessUp,      spawn,  SHCMD("/usr/bin/light -A 5 ; pkill -RTMIN+11 dwmblocks") },
+        { 0,                            XF86XK_MonBrightnessDown,    spawn,  SHCMD("/usr/bin/light -U 5 ; pkill -RTMIN+11 dwmblocks") },
+        { 0,                            XF86XK_AudioMute,            spawn,  SHCMD("/usr/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle; pkill -RTMIN+10 dwmblocks") },
+        { 0,                            XF86XK_AudioRaiseVolume,     spawn,  SHCMD("/usr/bin/pactl set-sink-volume @DEFAULT_SINK@ +5% ; pkill -RTMIN+10 dwmblocks") },
+        { 0,                            XF86XK_AudioLowerVolume,     spawn,  SHCMD("/usr/bin/pactl set-sink-volume @DEFAULT_SINK@ -5% ; pkill -RTMIN+10 dwmblocks") },
+	{ 0,                            XF86XK_AudioPlay,            spawn,  {.v = medplaypausecmd } },
+	{ 0,                            XF86XK_AudioStop,            spawn,  {.v = medstopcmd } },
+	{ 0,                            XF86XK_AudioNext,            spawn,  {.v = mednextcmd } },
+	{ 0,                            XF86XK_AudioPrev,            spawn,  {.v = medprevcmd } },
+
 };
 
 /* button definitions */
