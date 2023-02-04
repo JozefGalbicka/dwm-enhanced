@@ -14,7 +14,7 @@ static const char normfgcolor[]     = "#ebdbb2";
 static const char normbgcolor[]     = "#282828";
 static const char normbordercolor[] = "#444444";
 static const char selfgcolor[]      = "#ebdbb2";
-static const char selbgcolor[]      = "#98971a";
+static const char selbgcolor[]      = "#427b58";
 static const char selbordercolor[]  = "#444444";
 static const char *colors[][3]      = {
 	/*               fg         bg         border   */
@@ -36,8 +36,8 @@ static const Rule rules[] = {
 	 *	WM_NAME(STRING) = title
 	 */
 	/* class      instance    title       tags mask     isfloating   monitor */
-	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
-	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
+	{ "firefox",  NULL,       NULL,       1 << 1,       0,           -1 },
+	{ "dolphin",  NULL,       NULL,       1 << 2,       0,           -1 },
 };
 
 /* layout(s) */
@@ -70,6 +70,7 @@ static const Layout layouts[] = {
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbgcolor, "-sf", selfgcolor, NULL };
 static const char *termcmd[]  = { "st", NULL };
+static const char *clipmenucmd[] = { "clipmenu", "-i", "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbgcolor, "-sf", selfgcolor, NULL };
 
 /* media commands */
 static const char *medplaypausecmd[] = { "playerctl", "play-pause", NULL };
@@ -79,7 +80,7 @@ static const char *medprevcmd[] = { "playerctl", "previous", NULL };
 
 static const Key keys[] = {
 	/* modifier                     key        function        argument */
-	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
+	{ MODKEY,                       XK_e,      spawn,          {.v = dmenucmd } },
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
@@ -113,13 +114,22 @@ static const Key keys[] = {
 	TAGKEYS(                        XK_9,                      8)
 	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
 
-	/* additional shortcuts */
-	{ MODKEY | ShiftMask,           XK_p,      spawn,          SHCMD("/usr/bin/flameshot gui &")},
+	/* additional shortcuts */   
+	{ MODKEY|ShiftMask,             XK_v,      spawn,          {.v = clipmenucmd } },
+	{ MODKEY,                       XK_q,      spawn,          SHCMD("/usr/bin/dolphin")},
+	{ MODKEY,                       XK_w,      spawn,          SHCMD("/usr/local/bin/st /usr/local/bin/ranger && exit")},
 	{ MODKEY|ShiftMask,             XK_l,      spawn,          SHCMD("/usr/local/bin/slock") },
 	{ MODKEY|Mod4Mask,              XK_a,      spawn,          SHCMD("playerctl previous NULL") },
+	{ MODKEY|ShiftMask,             XK_a,      spawn,          SHCMD("/usr/bin/flameshot full -p ~/Pictures")},
+	{ MODKEY|ControlMask,           XK_a,      spawn,          SHCMD("/usr/bin/flameshot full -c")},
+	{ MODKEY|ShiftMask,             XK_s,      spawn,          SHCMD("/usr/bin/flameshot screen -p ~/Pictures")},
+	{ MODKEY|ControlMask,           XK_s,      spawn,          SHCMD("/usr/bin/flameshot screen -c")},
+	{ MODKEY|ShiftMask,             XK_d,      spawn,          SHCMD("/usr/bin/networkmanager_dmenu") },
+        { MODKEY|ControlMask,           XK_d ,     spawn,          SHCMD("/usr/bin/flameshot gui")},
 	{ MODKEY|Mod4Mask,              XK_s,      spawn,          SHCMD("playerctl next NULL") },
 	{ MODKEY|Mod4Mask,              XK_d,      spawn,          SHCMD("playerctl play-pause NULL") },
         { MODKEY|ControlMask,           XK_k,      spawn,          SHCMD("/usr/bin/setxkbmap -query | grep 'layout:[[:blank:]]*us' && setxkbmap sk || setxkbmap us && kill -46 $(pidof dwmblocks) && setxkbmap -option caps:ctrl_modifier")},
+	{ MODKEY|ShiftMask,             XK_o,      spawn,          SHCMD("pkill -USR1 redshift && dunstify 'Redshift' 'Toggled successfully.'") },
 
 
         { 0,                            XF86XK_MonBrightnessUp,      spawn,  SHCMD("/usr/bin/light -A 5 ; pkill -RTMIN+11 dwmblocks") },
@@ -131,6 +141,12 @@ static const Key keys[] = {
 	{ 0,                            XF86XK_AudioStop,            spawn,  {.v = medstopcmd } },
 	{ 0,                            XF86XK_AudioNext,            spawn,  {.v = mednextcmd } },
 	{ 0,                            XF86XK_AudioPrev,            spawn,  {.v = medprevcmd } },
+        //{ 0,                            XF86XK_AudioMicMute,         spawn,  SHCMD("") },
+	//{ 0,                            XF86XK_Calculator,           spawn,  SHCMD("") },
+	//{ Mod4Mask,                     XK_p,                        spawn,  SHCMD("") },
+	//{ Mod4Mask,                     XK_i,                        spawn,  SHCMD("") },
+	//{ Mod4Mask,                     XK_l,                        spawn,  SHCMD("") },
+	//{ MODKEY|ControlMask,           XK_Tab,                      spawn,  SHCMD("") },
 
 };
 
